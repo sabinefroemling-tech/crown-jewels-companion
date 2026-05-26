@@ -3,370 +3,241 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crown Jewels Analysis (CJA) · MITRE-Methodik</title>
+<title>Crown-Jewels-Identifikation · Companion zum Buch</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;600&display=swap');
 :root{--red:#cc0000;--red-soft:#edd3d2;--ink:#1a1614;--paper:#faf8f5;--line:#d8d2ca;--muted:#6b635c;
---l1:#cc0000;--l2:#cf5246;--l3:#c9820a;--l4:#3a7d44;
---m:#2d3a52;--t:#3d5a6c;--f:#5a7d6c;--a:#1a1614;}
+--krit:#cc0000;--hoch:#cf5246;--mittel:#c9820a;--niedrig:#3a7d44;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'JetBrains Mono',monospace;background:var(--paper);color:var(--ink);line-height:1.5;
 background-image:radial-gradient(var(--line) .5px,transparent .5px);background-size:22px 22px;}
-.wrap{max-width:1320px;margin:0 auto;padding:36px 20px 80px;}
+.wrap{max-width:1280px;margin:0 auto;padding:38px 20px 80px;}
 header{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:18px;}
 .kicker{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;}
 h1{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(24px,4.2vw,40px);line-height:1.05;margin:8px 0 10px;}
 .sub{font-size:13px;color:var(--muted);max-width:840px;}
 .sig{color:var(--red);font-weight:600;}
-h2{font-family:'Fraunces',serif;font-size:20px;margin:26px 0 4px;display:flex;align-items:center;gap:10px;}
-.tier-badge{color:#fff;font-size:11px;font-family:'JetBrains Mono';padding:3px 9px;font-weight:600;letter-spacing:.5px;}
+.ref{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px;}
+h2{font-family:'Fraunces',serif;font-size:20px;margin:26px 0 6px;}
 .note{font-size:12px;color:var(--muted);margin-bottom:10px;}
-.tier{background:#fff;border:1px solid var(--line);padding:12px 14px;margin-bottom:6px;}
-.tier.M{border-left:4px solid var(--m);} .tier.T{border-left:4px solid var(--t);}
-.tier.F{border-left:4px solid var(--f);} .tier.A{border-left:4px solid var(--a);}
-.node{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px dotted var(--line);flex-wrap:wrap;}
-.node:last-child{border:0;}
-.node input.nm{flex:1;min-width:160px;border:0;border-bottom:1px solid var(--line);font-family:inherit;font-size:13px;font-weight:600;background:transparent;padding:3px;color:var(--ink);}
-.node input.nm:focus{outline:0;border-bottom:1px solid var(--red);}
-.deps{display:flex;flex-direction:column;gap:3px;flex:2;min-width:220px;}
-.deplabel{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
-.deprow{display:flex;gap:6px;align-items:center;font-size:11px;}
-.deprow select{font-family:inherit;font-size:11px;border:1px solid var(--line);background:var(--paper);padding:2px;flex:1;}
-.deprow select.lvl{flex:0 0 130px;}
-.lvl1{color:var(--l1);font-weight:600} .lvl2{color:var(--l2);font-weight:600}
-.lvl3{color:var(--l3)} .lvl4{color:var(--muted)}
-.del{color:var(--muted);cursor:pointer;border:0;background:none;font-family:inherit;font-size:14px;align-self:center;}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:12px;}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:center;vertical-align:middle;}
+th{background:var(--red);color:#fff;font-weight:600;font-size:10.5px;}
+th.crit{font-size:10px;}
+td.name{text-align:left;font-weight:600;min-width:150px;}
+td.name input{width:100%;border:0;font-family:inherit;font-size:12px;font-weight:600;background:transparent;color:var(--ink);}
+td.txt input{width:100%;border:0;font-family:inherit;font-size:11px;background:transparent;color:var(--ink);}
+input:focus,select:focus{outline:1px solid var(--red);}
+select{font-family:inherit;font-size:12px;border:1px solid var(--line);background:var(--paper);padding:3px;width:48px;cursor:pointer;}
+select.crit4{border-color:var(--red);font-weight:600;}
+.flagcell{font-weight:600;color:#fff;font-size:10.5px;letter-spacing:.4px;}
+.cnt{font-size:10px;color:var(--muted);}
+.del{color:var(--muted);cursor:pointer;border:0;background:none;font-family:inherit;font-size:14px;}
 .del:hover{color:var(--red);}
-.addbtn{font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
-padding:6px 12px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;margin-top:8px;}
-.addbtn:hover{background:var(--ink);color:#fff;}
-.depadd{font-size:10px;color:var(--muted);cursor:pointer;background:none;border:1px dashed var(--line);padding:2px 8px;font-family:inherit;}
-.depadd:hover{border-color:var(--red);color:var(--red);}
 .btn{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
 padding:10px 15px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;transition:.15s;}
 .btn.ghost{background:transparent;color:var(--ink);} .btn:hover{background:var(--red);border-color:var(--red);color:#fff;}
-.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:26px 0 0;}
-.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:16px 0;}
+.addbtn{font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:7px 13px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;margin-top:10px;}
+.addbtn:hover{background:var(--ink);color:#fff;}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 0;}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:18px 0;}
 @media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr)}}
 .scard{border:1px solid var(--ink);background:#fff;padding:13px;}
 .scard .num{font-family:'Fraunces',serif;font-size:28px;font-weight:800;}
 .scard .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
 .scard.cj{border-color:var(--red);} .scard.cj .num{color:var(--red);}
-.result{width:100%;border-collapse:collapse;background:#fff;font-size:12px;margin-top:8px;}
-.result th,.result td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top;}
-.result th{background:var(--ink);color:#fff;font-size:11px;}
-.classcell{color:#fff;font-weight:600;font-size:11px;text-align:center;letter-spacing:.4px;}
-.chain{font-size:10.5px;color:var(--muted);}
 .legend{font-size:11px;color:var(--muted);margin:8px 0;}
 .pill{display:inline-block;padding:1px 7px;font-weight:600;color:#fff;margin-right:3px;font-size:10px;}
+.warn{background:#fff7e6;border:1px solid var(--mittel);color:#8a5a00;font-size:11.5px;padding:9px 12px;margin:10px 0;}
 details{margin:12px 0;background:#fff;border:1px solid var(--line);padding:10px 14px;}
 summary{cursor:pointer;font-weight:600;font-size:12px;}
-details p{font-size:11.5px;color:var(--muted);margin-top:8px;}
+details p,details li{font-size:11.5px;color:var(--muted);margin-top:6px;}
+details ul{margin-left:18px;}
 footer{margin-top:34px;border-top:1px solid var(--line);padding-top:15px;font-size:11px;color:var(--muted);line-height:1.7;}
-.warn{background:#fff7e6;border:1px solid var(--l3);color:#8a5a00;font-size:11.5px;padding:9px 12px;margin:10px 0;}
-.warn b{color:#8a5a00;}
-.warn ul{margin:4px 0 0 16px;} .warn li{margin:2px 0;}
-.subnote{font-size:10.5px;color:var(--muted);font-style:italic;margin:6px 0 0;}
-@media print{
-  body{background:none;}
-  .toolbar,.addbtn,.depadd,.del{display:none !important;}
-  .chain{white-space:normal;word-break:break-word;font-size:9.5px;line-height:1.35;}
-  .result{font-size:10px;} .result th,.result td{padding:4px 5px;}
-  details{display:none;}
-  h2{page-break-after:avoid;}
-}
+@media print{body{background:none}.toolbar,.addbtn,.del{display:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="kicker">OT-Security · Crown Jewels Analysis</div>
-  <h1>CJA — Mission-Impact-Analyse</h1>
-  <p class="sub">Vier-Ebenen-Methodik nach MITRE (CJA for ICS, 2022): Missionsziele → operative Aufgaben → Systemfunktionen → Assets. Sie <b>verknüpfen</b> die Ebenen und bewerten jede Abhängigkeit auf der Impact-Skala I–IV — die Kronjuwelen werden daraus <b>abgeleitet</b>, nicht geschätzt. Ein Asset ist Kronjuwel, wenn sein Ausfall sich über die Kette bis zu einem Missionsziel mit Level-I-Impact durchschlägt. <span class="sig">§</span> Alles bleibt im Browser.</p>
+  <div class="kicker">OT-Security · Companion zum Buch</div>
+  <h1>Crown-Jewels-Identifikation</h1>
+  <p class="sub">Bewertung der OT-Assets nach fünf Kriterien (Skala 1–4, 4 = kritisch). Ein Asset ist automatisch Crown Jewel, wenn es in <b>mindestens zwei Kriterien</b> die Bewertung 4 erreicht. Die Methodik bildet das Verfahren aus dem Buch exakt ab — Ziel sind maximal fünf Crown Jewels je Werk. <span class="sig">§</span> Alles bleibt im Browser.</p>
+  <p class="ref">Methodik nach „ISMS für die Industrie\u201c, Kap. 3.5.2 (Crown-Jewels-Analyse) und 3.5.3 (Register).</p>
 </header>
 
 <details>
-<summary>Methodik, Impact-Skala & bewusste Grenzen (lesen)</summary>
-<p><b>Impact-Skala (Defense Acquisition Guidebook, via MITRE):</b> Level I = Total Mission Failure · Level II = Significant Degradation · Level III = Partial Capability Loss (Workaround) · Level IV = Negligible/No Loss. Jede Abhängigkeit „Knoten hängt ab von Kind-Knoten\u201c trägt eines dieser Level.</p>
-<p><b>Propagation:</b> Ein Asset erbt das <i>schlimmste</i> (= niedrigste Level-Nummer) Impact-Level, das über irgendeine durchgehende Kette Asset → Funktion → Aufgabe → Missionsziel erreichbar ist. Eine Kette „trägt\u201c nur, wenn jede Stufe der Kette mindestens das betrachtete Level hat (eine Level-IV-Zwischenstufe bricht die Level-I-Wirkung). Kronjuwel = erreicht Level I. Hoch = Level II. Mittel = Level III. Niedrig = nur Level IV / kein Pfad.</p>
-<p><b>Bewusste Vereinfachung ggü. vollem CJA:</b> MITRE nutzt zusätzlich AHP/QFD/FMEA zur relativen Rangordnung. Dieses Werkzeug verwendet stattdessen die transparente Max-Impact-Propagation — leichter pflegbar, aber keine gewichtete Gesamtrangfolge. Es ist eine Mini-CJA zur Priorisierung, kein Ersatz für eine vollständige CJA, BIA (IEC 62443-3-2 / ISO 22301) oder Risikoanalyse. Eintrittswahrscheinlichkeit ist bewusst ausgeklammert (Risiko = Kritikalität × Wahrscheinlichkeit erfolgt nachgelagert).</p>
-<p><b>Subjektivität verschwindet nicht — sie verlagert sich:</b> Die Methodik vermeidet die Frage „ist Safety=4 gleich viel wert wie Produktion=4?\u201c, ersetzt sie aber durch die Bewertung „ist diese Abhängigkeit Level I oder II?\u201c. Das ist eine klarer kalibrierbare, aber weiterhin fachliche SME-Entscheidung. Die Ergebnisse sind nur so belastbar wie die Konsistenz dieser Level-Zuordnungen.</p>
+<summary>Die fünf Kriterien & die Klassifikationsregel (lesen)</summary>
+<ul>
+<li><b>Physische Auswirkung</b> — Lebensgefahr oder Umweltschaden bei Ausfall/Manipulation (4 = unmittelbare Gefahr).</li>
+<li><b>Wirtschaftlicher Schaden</b> — über 250.000 € pro Stunde bei Ausfall (4 = Schwelle erreicht/überschritten).</li>
+<li><b>Regulatorische Pflicht</b> — Nachweispflicht nach §39 BSIG (4 = explizit nachweispflichtig).</li>
+<li><b>Abhängigkeiten der Gesamtproduktion</b> — wie viele Prozesse vom Asset abhängen (4 = produktionsweiter Single Point of Failure).</li>
+<li><b>Wiederherstellungszeit (RTO)</b> — RTO über 24 Stunden bei Ausfall (4 = sehr lange/keine schnelle Wiederherstellung).</li>
+</ul>
+<p><b>Klassifikationsregel (Buch 3.5.2):</b> Bewertung 4 in mindestens zwei Kriterien → automatisch Crown Jewel. Zusätzlich zeigt das Tool eine abgestufte Einordnung (Hoch/Mittel/Niedrig) für die übrigen Assets als Priorisierungshilfe — die verbindliche Crown-Jewel-Schwelle bleibt aber „4 in ≥2 Kriterien\u201c gemäß Buch.</p>
+<p><b>Hinweis:</b> Das Register ist kein statisches Dokument. Crown Jewels erhalten im Risiko-Assessment höchste Priorität, kürzere Patch-SLA (7 Tage bei kritischen Lücken, auch außerhalb von Wartungsfenstern), MFA/PAM-Pflicht und 24/7-Monitoring. Jährliche Überprüfung im Management-Review.</p>
 </details>
 
-<h2><span class="tier-badge" style="background:var(--m)">Ebene 1</span>Missionsziele</h2>
-<p class="note">Was muss der Betrieb leisten? (z. B. „Sichere Stromversorgung\u201c, „GMP-konforme Produktion\u201c)</p>
-<div class="tier M" id="tierM"></div>
-<button class="addbtn" onclick="addNode('M')">+ Missionsziel</button>
+<h2>Schritt 1 — Asset-Bewertung (5 Kriterien · Skala 1–4)</h2>
+<p class="note">Einstiegsfrage: Welche einzelne Komponente — SPS, SCADA, HMI, Schutzrelais, Historian — darf unter keinen Umständen ausfallen? Maximal fünf Crown Jewels je Werk anstreben.</p>
+<div style="overflow-x:auto;">
+<table id="tbl">
+  <thead><tr>
+    <th style="text-align:left">Asset / System</th>
+    <th class="crit">Physische<br>Auswirkung</th>
+    <th class="crit">Wirtsch.<br>Schaden</th>
+    <th class="crit">Regulator.<br>Pflicht §39</th>
+    <th class="crit">Produktions-<br>Abhängigk.</th>
+    <th class="crit">RTO<br>&gt;24h</th>
+    <th>4er-<br>Zähler</th>
+    <th>Einordnung</th>
+    <th></th>
+  </tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+</div>
+<button class="addbtn" onclick="addAsset()">+ Asset</button>
 
-<h2><span class="tier-badge" style="background:var(--t)">Ebene 2</span>Operative Aufgaben</h2>
-<p class="note">Welche Tätigkeiten/Fähigkeiten tragen die Missionsziele? Verknüpfen Sie nach unten zu den Missionszielen, die diese Aufgabe stützt.</p>
-<div class="tier T" id="tierT"></div>
-<button class="addbtn" onclick="addNode('T')">+ Operative Aufgabe</button>
-
-<h2><span class="tier-badge" style="background:var(--f)">Ebene 3</span>Systemfunktionen</h2>
-<p class="note">Welche Funktionen ermöglichen die Aufgaben? (z. B. „Steuersignale senden\u201c, „Identitäts-/Zugriffsverwaltung\u201c, „Zeitsynchronisation\u201c)</p>
-<div class="tier F" id="tierF"></div>
-<button class="addbtn" onclick="addNode('F')">+ Systemfunktion</button>
-
-<h2><span class="tier-badge" style="background:var(--a)">Ebene 4</span>Assets</h2>
-<p class="note">Welche Geräte/Systeme erbringen die Funktionen? (z. B. SPS, SCADA-Server, OT/IT-Gateway, Domänencontroller)</p>
-<div class="tier A" id="tierA"></div>
-<button class="addbtn" onclick="addNode('A')">+ Asset</button>
-
-<h2 style="margin-top:30px">Ergebnis — Kronjuwelen</h2>
-<div id="gapWarn"></div>
 <div class="summary" id="summary"></div>
 <div class="legend">
-  <span class="pill" style="background:var(--l1)">KRONJUWEL · Level I</span>
-  <span class="pill" style="background:var(--l2)">HOCH · Level II</span>
-  <span class="pill" style="background:var(--l3)">MITTEL · Level III</span>
-  <span class="pill" style="background:var(--l4)">NIEDRIG · Level IV / kein Pfad</span>
+  <span class="pill" style="background:var(--krit)">CROWN JEWEL · 4 in ≥2 Kriterien</span>
+  <span class="pill" style="background:var(--hoch)">HOCH · eine 4</span>
+  <span class="pill" style="background:var(--mittel)">MITTEL · Summe ≥12 (Ø ≥2,4)</span>
+  <span class="pill" style="background:var(--niedrig)">NIEDRIG</span>
 </div>
-<table class="result" id="resultTbl">
-  <thead><tr><th style="width:40px">#</th><th>Asset</th><th style="width:140px">Klasse</th><th>Kritischste Wirkungskette</th></tr></thead>
-  <tbody id="resultRows"></tbody>
+<div id="overWarn"></div>
+
+<h2>Schritt 2 — Crown-Jewels-Register</h2>
+<p class="note">Für jedes als Crown Jewel klassifizierte Asset werden hier die Register-Felder gepflegt (Buch 3.5.3). RTO „0 h\u201c bedeutet: darf nie ausfallen, sofortiger manueller Eingriff.</p>
+<div style="overflow-x:auto;">
+<table id="regTbl">
+  <thead><tr>
+    <th>ID</th><th style="text-align:left">Asset</th><th>Typ</th><th>Asset Owner</th>
+    <th>RTO</th><th>RPO</th><th>Kritikalität</th><th style="text-align:left">CJ-Begründung</th><th style="text-align:left">Kompensation</th>
+  </tr></thead>
+  <tbody id="regRows"></tbody>
 </table>
+</div>
+<p class="note" id="regEmpty"></p>
+
+<div class="warn" style="margin-top:30px;border-color:var(--red);background:#fdeceb;">
+  <b>⚠ Wichtiger Hinweis zur Vollständigkeit — Abhängigkeiten:</b>
+  Dieses Werkzeug bewertet jedes Asset <b>isoliert</b> nach den fünf Kriterien. In der Praxis wird ein für sich unkritisches Asset (z. B. OT-Switch, Domänencontroller, Stromversorgung, Verkabelung) oft kritisch, <i>weil mehrere andere Assets davon abhängen</i> — ohne dass es selbst zwei 4er erreicht.
+  Prüfen Sie deshalb nach der isolierten Bewertung in einem zweiten Schritt manuell, ob ein Asset durch Abhängigkeiten faktisch zum Crown Jewel wird. Eine vollständige Crown-Jewels-Analyse berücksichtigt diese Abhängigkeitsketten.
+</div>
 
 <div class="toolbar">
   <button class="btn ghost" onclick="saveJSON()">Speichern (JSON)</button>
   <button class="btn ghost" onclick="document.getElementById('file').click()">Laden (JSON)</button>
   <input type="file" id="file" accept=".json" style="display:none" onchange="loadJSON(event)">
-  <button class="btn ghost" onclick="document.getElementById('csvfile').click()">CSV importieren</button>
-  <input type="file" id="csvfile" accept=".csv" style="display:none" onchange="importCSV(event)">
-  <button class="btn ghost" onclick="csvTemplate()">CSV-Vorlage</button>
   <button class="btn ghost" onclick="exportCSV()">Export CSV</button>
   <button class="btn ghost" onclick="window.print()">Drucken / PDF</button>
 </div>
 
 <footer>
-  Methodik nach MITRE „Crown Jewels Analysis (CJA) for Industrial Control Systems\u201c (#22-2824, 2022). Vier-Ebenen-Abhängigkeitsmodell mit Impact-Propagation I–IV.
-  Vereinfacht ggü. vollem CJA (ohne AHP/QFD/FMEA-Rangordnung); kein Ersatz für vollständige CJA, BIA oder Risikoanalyse. Bewertungen sind fachlich zu prüfen.<br>
+  Methodik exakt nach „ISMS für die Industrie\u201c, Kap. 3.5. Crown-Jewel-Schwelle: Bewertung 4 in mindestens zwei der fünf Kriterien.
+  Kritikalitätsstufen Hoch/Kritisch entsprechen NIS2 §30 Abs. 2 Nr. 1 (Risikoanalyse) und Nr. 3 (Business Continuity).
+  Begleitwerkzeug zur Workshop-Strukturierung — ersetzt nicht den Workshop mit OT-Leitung, Produktion und ISMS-Verantwortlichen.<br>
   <span class="sig">§</span> Sabine Frömling — Independent OT-Security &amp; Compliance Advisory.
 </footer>
 </div>
 
 <script>
-// Datenmodell: nodes je Ebene; jede Abhängigkeit = {parentId, level} (Kind zeigt auf Eltern eine Ebene höher)
-// Ebenen-Reihenfolge oben->unten: M, T, F, A. Kind (z.B. T) hängt-ab-von Eltern (M).
-const LEVELS=[{v:1,n:"I · Total Failure",cls:"lvl1"},{v:2,n:"II · Degradation",cls:"lvl2"},{v:3,n:"III · Workaround",cls:"lvl3"},{v:4,n:"IV · Negligible",cls:"lvl4"}];
-const PARENT={T:"M",F:"T",A:"F"}; // welche Ebene ist die Eltern-Ebene
-const TIERNAME={M:"Missionsziel",T:"Aufgabe",F:"Funktion",A:"Asset"};
-let data={M:[],T:[],F:[],A:[]};
-
+const CRIT=["phys","econ","reg","dep","rto"];
+const TYP=["SPS","SCADA","HMI","Schutzrelais","Historian","Engineering-WS","Netzwerk","Datenbank","Sonstiges"];
+let assets=[];
+function defAsset(n){return {id:uid(),name:n||"Neues Asset",phys:1,econ:1,reg:1,dep:1,rto:1,
+  typ:"SPS",owner:"",rtoVal:"",rpoVal:"",komp:""};}
 function uid(){return crypto.randomUUID();}
-function node(tier,name){return {id:uid(),name:name||TIERNAME[tier],deps:[]};} // deps: [{parentId,level}]
 
-function addNode(tier){data[tier].push(node(tier));render();}
-function delNode(tier,id){
-  data[tier]=data[tier].filter(n=>n.id!==id);
-  // Abhängigkeiten von Kindern auf diesen Knoten entfernen
-  const childTier=Object.keys(PARENT).find(k=>PARENT[k]===tier);
-  if(childTier) data[childTier].forEach(n=>n.deps=n.deps.filter(d=>d.parentId!==id));
-  render();
+// Buch-Logik: 4 in >=2 Kriterien -> Crown Jewel. Sonst abgestufte Hilfs-Einordnung.
+function count4(a){return CRIT.reduce((n,k)=>n+(a[k]===4?1:0),0);}
+function sum(a){return CRIT.reduce((s,k)=>s+a[k],0);}
+function classify(a){
+  const c4=count4(a);
+  if(c4>=2)return{label:"CROWN JEWEL",color:"var(--krit)",rank:4,cj:true};
+  if(c4===1)return{label:"HOCH",color:"var(--hoch)",rank:3,cj:false};
+  if(sum(a)>=12)return{label:"MITTEL",color:"var(--mittel)",rank:2,cj:false};
+  return{label:"NIEDRIG",color:"var(--niedrig)",rank:1,cj:false};
 }
-function addDep(tier,id){const n=data[tier].find(x=>x.id===id);n.deps.push({parentId:"",level:1});render();}
-function delDep(tier,id,idx){const n=data[tier].find(x=>x.id===id);n.deps.splice(idx,1);render();}
-function setDep(tier,id,idx,field,val){const n=data[tier].find(x=>x.id===id);n.deps[idx][field]=field==='level'?+val:val;render();}
-function setName(tier,id,val){data[tier].find(x=>x.id===id).name=val;render();}
-
+function critLabel(a){ // Register-Kritikalität
+  const c4=count4(a);
+  if(c4>=2)return"Kritisch"; if(c4===1||sum(a)>=14)return"Hoch"; return"Mittel";
+}
+const CRITNAME={phys:"physische Auswirkung",econ:"wirtsch. Schaden",reg:"regulator. Pflicht",dep:"Produktionsabhängigkeit",rto:"RTO >24h"};
+function crit4Reasons(a){return CRIT.filter(k=>a[k]===4).map(k=>CRITNAME[k]).join(", ");}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
-function renderTier(tier){
-  const el=document.getElementById('tier'+tier);el.innerHTML='';
-  const parentTier=PARENT[tier];
-  data[tier].forEach(n=>{
-    const row=document.createElement('div');row.className='node';
-    let html=`<input class="nm" value="${esc(n.name)}" onchange="setName('${tier}','${n.id}',this.value)">`;
-    if(parentTier){
-      html+=`<div class="deps"><span class="deplabel">hängt-ab-von (${TIERNAME[parentTier]} · Impact)</span>`;
-      n.deps.forEach((d,i)=>{
-        html+=`<div class="deprow">
-          <select onchange="setDep('${tier}','${n.id}',${i},'parentId',this.value)">
-            <option value="">— wählen —</option>`+
-            data[parentTier].map(p=>`<option value="${p.id}" ${d.parentId===p.id?'selected':''}>${esc(p.name)}</option>`).join('')+
-          `</select>
-          <select class="lvl" onchange="setDep('${tier}','${n.id}',${i},'level',this.value)">`+
-            LEVELS.map(l=>`<option value="${l.v}" ${d.level===l.v?'selected':''}>${l.n}</option>`).join('')+
-          `</select>
-          <button class="del" onclick="delDep('${tier}','${n.id}',${i})">✕</button></div>`;
-      });
-      html+=`<button class="depadd" onclick="addDep('${tier}','${n.id}')">+ Abhängigkeit</button></div>`;
-    }
-    html+=`<button class="del" onclick="delNode('${tier}','${n.id}')">✕</button>`;
-    row.innerHTML=html;el.appendChild(row);
+function render(){
+  const tb=document.getElementById('rows');tb.innerHTML='';
+  assets.forEach((a,i)=>{
+    const cl=classify(a),c4=count4(a);
+    let c=`<td class="name"><input value="${esc(a.name)}" onchange="upd(${i},'name',this.value)"></td>`;
+    CRIT.forEach(k=>{
+      c+=`<td><select class="${a[k]===4?'crit4':''}" onchange="upd(${i},'${k}',+this.value)">`+
+        [1,2,3,4].map(v=>`<option ${a[k]==v?'selected':''}>${v}</option>`).join('')+`</select></td>`;
+    });
+    c+=`<td class="cnt">${c4}×4</td>`;
+    c+=`<td class="flagcell" style="background:${cl.color}">${cl.label}</td>`;
+    c+=`<td><button class="del" onclick="del(${i})">✕</button></td>`;
+    const tr=document.createElement('tr');tr.innerHTML=c;tb.appendChild(tr);
   });
+  renderSummary();renderRegister();
 }
-
-// Propagation: für jedes Asset das schlimmste (min) Level über durchgehende Ketten A->F->T->M.
-// Eine Kette trägt Level L nur, wenn JEDE Kante <= L ist (Kante-Level <= L bedeutet mindestens so kritisch).
-// Wir berechnen: bestLevel(node) = min über alle Eltern-Kanten von max(kante.level, bestLevel(parent)).
-// bestLevel(M)=1 (Missionsziel selbst ist die Spitze; sein "Impact" ist definitionsgemäß Level I als Referenz).
-const memo={};
-function bestLevel(tier,id,chain){
-  if(tier==='M'){return {level:1,path:[nm('M',id)]};} // erreicht Mission -> Level I als Bezug
-  const key=tier+id;
-  const n=data[tier].find(x=>x.id===id);
-  if(!n||!n.deps.length){return {level:5,path:[nm(tier,id)+" (kein Pfad)"]};}
-  let best={level:5,path:[]};
-  const parentTier=PARENT[tier];
-  n.deps.forEach(d=>{
-    if(!d.parentId)return;
-    const up=bestLevel(parentTier,d.parentId);
-    // effektives Level dieser Kante in der Kette = schlechter (höhere Nummer) von Kante und Rest
-    const eff=Math.max(d.level, up.level);
-    if(eff<best.level){best={level:eff,path:[nm(tier,id)+" →["+roman(d.level)+"]"].concat(up.path)};}
-  });
-  return best;
+function renderSummary(){
+  const c={4:0,3:0,2:0,1:0};assets.forEach(a=>c[classify(a).rank]++);
+  document.getElementById('summary').innerHTML=`
+    <div class="scard cj"><div class="num">${c[4]}</div><div class="lbl">Crown Jewels</div></div>
+    <div class="scard"><div class="num">${c[3]}</div><div class="lbl">Hoch</div></div>
+    <div class="scard"><div class="num">${c[2]}</div><div class="lbl">Mittel</div></div>
+    <div class="scard"><div class="num">${assets.length}</div><div class="lbl">Assets gesamt</div></div>`;
+  // Buch: maximal 5 Crown Jewels anstreben
+  const w=document.getElementById('overWarn');
+  if(c[4]>5){w.innerHTML=`<div class="warn">⚠ ${c[4]} Crown Jewels identifiziert. Das Buch empfiehlt maximal fünf je Werk — prüfen Sie, ob die Bewertung zu großzügig ist oder ob der Geltungsbereich (z. B. mehrere Werke) aufgeteilt werden sollte.</div>`;}
+  else w.innerHTML='';
 }
-function nm(tier,id){const n=data[tier].find(x=>x.id===id);return n?n.name:"?";}
-function roman(l){return["","I","II","III","IV"][l]||"?";}
-function classOf(level){
-  if(level===1)return{label:"KRONJUWEL",color:"var(--l1)",rank:4};
-  if(level===2)return{label:"HOCH",color:"var(--l2)",rank:3};
-  if(level===3)return{label:"MITTEL",color:"var(--l3)",rank:2};
-  return{label:"NIEDRIG",color:"var(--l4)",rank:1};
-}
-
-function renderResult(){
-  const scored=data.A.map(a=>{const b=bestLevel('A',a.id);return {a,level:b.level,path:b.path,cls:classOf(b.level)};});
-  scored.sort((x,y)=>x.level-y.level || x.a.name.localeCompare(y.a.name));
-  const tb=document.getElementById('resultRows');tb.innerHTML='';
-  scored.forEach((r,i)=>{
+function renderRegister(){
+  const cjs=assets.filter(a=>classify(a).cj);
+  const tb=document.getElementById('regRows');tb.innerHTML='';
+  document.getElementById('regEmpty').textContent=cjs.length?'':'Noch keine Crown Jewels klassifiziert (4 in ≥2 Kriterien). Bewerten Sie zuerst in Schritt 1.';
+  cjs.forEach((a,i)=>{
+    const idx=assets.indexOf(a);
+    const id="CJ-"+String(i+1).padStart(3,'0');
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${i+1}</td><td style="font-weight:600">${esc(r.a.name)}</td>`+
-      `<td class="classcell" style="background:${r.cls.color}">${r.cls.label}</td>`+
-      `<td class="chain">${r.level<5?esc(r.path.join("  →  ")):"— keine durchgehende Kette zu einem Missionsziel —"}</td>`;
+    tr.innerHTML=`<td>${id}</td>`+
+      `<td class="name">${esc(a.name)}</td>`+
+      `<td><select onchange="upd(${idx},'typ',this.value)" style="width:auto">`+TYP.map(t=>`<option ${a.typ===t?'selected':''}>${t}</option>`).join('')+`</select></td>`+
+      `<td class="txt"><input value="${esc(a.owner)}" placeholder="Owner" onchange="upd(${idx},'owner',this.value)"></td>`+
+      `<td class="txt"><input value="${esc(a.rtoVal)}" placeholder="z.B. 2 h" style="width:60px" onchange="upd(${idx},'rtoVal',this.value)"></td>`+
+      `<td class="txt"><input value="${esc(a.rpoVal)}" placeholder="z.B. 0" style="width:60px" onchange="upd(${idx},'rpoVal',this.value)"></td>`+
+      `<td class="flagcell" style="background:var(--krit)">${critLabel(a)}</td>`+
+      `<td class="txt" style="font-size:10.5px;color:var(--muted)">4 in: ${esc(crit4Reasons(a))}</td>`+
+      `<td class="txt"><input value="${esc(a.komp)}" placeholder="Kompensationsmaßnahmen" onchange="upd(${idx},'komp',this.value)"></td>`;
     tb.appendChild(tr);
   });
-  const c={4:0,3:0,2:0,1:0};scored.forEach(r=>c[r.cls.rank]++);
-  document.getElementById('summary').innerHTML=`
-    <div class="scard cj"><div class="num">${c[4]}</div><div class="lbl">Kronjuwelen (Lvl I)</div></div>
-    <div class="scard"><div class="num">${c[3]}</div><div class="lbl">Hoch (Lvl II)</div></div>
-    <div class="scard"><div class="num">${data.A.length}</div><div class="lbl">Assets</div></div>
-    <div class="scard"><div class="num">${data.M.length}</div><div class="lbl">Missionsziele</div></div>`;
-  renderGaps(scored);
 }
+function upd(i,k,v){assets[i][k]=v;render();}
+function del(i){assets.splice(i,1);render();}
+function addAsset(){assets.push(defAsset("Asset "+(assets.length+1)));render();}
 
-// ---- Lücken-Warnung: verwaiste Knoten ohne durchgehenden Pfad nach oben ----
-function reachesMission(tier,id,seen){
-  if(tier==='M')return true;
-  seen=seen||new Set(); if(seen.has(tier+id))return false; seen.add(tier+id);
-  const n=data[tier].find(x=>x.id===id); if(!n||!n.deps.length)return false;
-  return n.deps.some(d=>d.parentId&&reachesMission(PARENT[tier],d.parentId,seen));
-}
-function renderGaps(scored){
-  const el=document.getElementById('gapWarn'); const issues=[];
-  // Knoten der Ebenen T/F/A ohne Abhängigkeit oder ohne Pfad zur Mission
-  [['T','Operative Aufgabe'],['F','Systemfunktion'],['A','Asset']].forEach(([t,label])=>{
-    data[t].forEach(n=>{
-      if(!n.deps.some(d=>d.parentId)) issues.push(`${label} „${n.name}\u201c ist mit keiner übergeordneten Ebene verknüpft.`);
-      else if(!reachesMission(t,n.id)) issues.push(`${label} „${n.name}\u201c hat keinen durchgehenden Pfad bis zu einem Missionsziel (Kette endet im Leeren).`);
-    });
-  });
-  // Assets, die zwar verknüpft sind, aber als kein Pfad enden -> bereits oben erfasst
-  if(!issues.length){el.innerHTML='';return;}
-  el.innerHTML=`<div class="warn"><b>⚠ ${issues.length} Hinweis(e) zur Modell-Vollständigkeit:</b><ul>`+
-    issues.slice(0,12).map(i=>`<li>${esc(i)}</li>`).join('')+
-    (issues.length>12?`<li>… und ${issues.length-12} weitere.</li>`:'')+
-    `</ul><div class="subnote">Solche Knoten erscheinen im Ergebnis als „kein Pfad\u201c. Prüfen Sie die Verknüpfung nach oben.</div></div>`;
-}
-function render(){['M','T','F','A'].forEach(renderTier);renderResult();}
-
-function saveJSON(){
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cja-mitre.json';a.click();
-}
+function saveJSON(){const blob=new Blob([JSON.stringify({assets},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crown-jewels-buch.json';a.click();}
 function loadJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{const d=JSON.parse(r.result);if(d.M&&d.A){data=d;render();}else alert('Unerwartetes Format.');}
-  catch(err){alert('Datei konnte nicht gelesen werden.');}};r.readAsText(f);}
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(d.assets){assets=d.assets;render();}}catch(err){alert('Datei nicht lesbar.');}};r.readAsText(f);}
 function exportCSV(){
-  const scored=data.A.map(a=>{const b=bestLevel('A',a.id);return [a.name,classOf(b.level).label,roman(b.level),b.level<5?b.path.join(" -> "):"kein Pfad"];});
-  scored.sort((x,y)=>x[1].localeCompare(y[1]));
-  const head=["Asset","Klasse","Impact-Level","Wirkungskette"];
-  const csv=[head,...scored].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
+  const head=["Asset","Physisch","Wirtschaft","Regulatorik","Abhängigk","RTO>24h","4er-Zähler","Einordnung","CJ-Kritikalität","Typ","Owner","RTO","RPO","Kompensation"];
+  const rows=assets.map(a=>[a.name,a.phys,a.econ,a.reg,a.dep,a.rto,count4(a),classify(a).label,classify(a).cj?critLabel(a):"",a.typ,a.owner,a.rtoVal,a.rpoVal,a.komp]);
+  const csv=[head,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
   const blob=new Blob(["\ufeff"+csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='kronjuwelen-cja.csv';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crown-jewels-register.csv';a.click();
 }
 
-// ---- CSV-Import: Spalten Ebene;Name;HängtAbVon;Level ----
-function csvTemplate(){
-  const rows=[
-    ["Ebene","Name","HaengtAbVon","Level"],
-    ["M","Sichere Stromversorgung","",""],
-    ["T","Verteilung überwachen & steuern","Sichere Stromversorgung","1"],
-    ["F","OT/IT-Konnektivität bereitstellen","Verteilung überwachen & steuern","1"],
-    ["A","OT/IT-Gateway","OT/IT-Konnektivität bereitstellen","1"],
-  ];
-  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
-  const blob=new Blob(["\ufeff"+csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cja-vorlage.csv';a.click();
-}
-function parseCSV(text){
-  // simpler Parser: Semikolon-getrennt, optionale Quotes, \n oder \r\n
-  const lines=text.replace(/\r\n/g,"\n").split("\n").filter(l=>l.trim().length);
-  return lines.map(line=>{
-    const out=[];let cur="",q=false;
-    for(let i=0;i<line.length;i++){const ch=line[i];
-      if(q){if(ch==='"'){if(line[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=ch;}
-      else{if(ch==='"')q=true;else if(ch===';'){out.push(cur);cur="";}else cur+=ch;}
-    }
-    out.push(cur);return out.map(s=>s.trim());
-  });
-}
-function importCSV(e){
-  const f=e.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{
-    const rows=parseCSV(r.result.replace(/^\ufeff/,''));
-    if(!rows.length){alert('Leere Datei.');return;}
-    // Header erkennen
-    const head=rows[0].map(h=>h.toLowerCase());
-    const iE=head.findIndex(h=>h.startsWith('ebene'));
-    const iN=head.findIndex(h=>h.startsWith('name'));
-    const iP=head.findIndex(h=>h.includes('hängt')||h.includes('haengt')||h.includes('parent'));
-    const iL=head.findIndex(h=>h.startsWith('level'));
-    if(iE<0||iN<0){alert('Spalten „Ebene\u201c und „Name\u201c nicht gefunden. Nutzen Sie die CSV-Vorlage.');return;}
-    const fresh={M:[],T:[],F:[],A:[]};
-    const byName={M:{},T:{},F:{},A:{}};
-    // 1. Durchlauf: Knoten anlegen (nach Name eindeutig je Ebene)
-    rows.slice(1).forEach(row=>{
-      const tier=(row[iE]||'').toUpperCase().trim();
-      const name=(row[iN]||'').trim();
-      if(!['M','T','F','A'].includes(tier)||!name)return;
-      if(!byName[tier][name]){const nd=node(tier,name);fresh[tier].push(nd);byName[tier][name]=nd;}
-    });
-    // 2. Durchlauf: Abhängigkeiten verknüpfen
-    rows.slice(1).forEach(row=>{
-      const tier=(row[iE]||'').toUpperCase().trim();
-      const name=(row[iN]||'').trim();
-      const pname=iP>=0?(row[iP]||'').trim():'';
-      const level=iL>=0?(parseInt(row[iL])||1):1;
-      if(!['T','F','A'].includes(tier)||!pname)return;
-      const child=byName[tier][name]; const ptier=PARENT[tier]; const parent=byName[ptier][pname];
-      if(child&&parent){child.deps.push({parentId:parent.id,level:Math.min(4,Math.max(1,level))});}
-    });
-    data=fresh;render();
-    alert('Import erfolgreich: '+(fresh.M.length+fresh.T.length+fresh.F.length+fresh.A.length)+' Knoten geladen.');
-  }catch(err){alert('CSV konnte nicht verarbeitet werden: '+err.message);}};
-  r.readAsText(f);
-}
-
-// ---- Seed: MITRE-Beispiel "Stromverteilung" (Fig. 9) ----
-const m1=node('M','Sichere Stromversorgung');
-const t1=node('T','Verteilung überwachen & steuern');
-const f1=node('F','OT/IT-Konnektivität bereitstellen');
-const f2=node('F','OT-Daten erfassen & verarbeiten');
-const a1=node('A','OT/IT-Gateway');
-const a2=node('A','Hauptschalter / Schutzsystem');
-const a3=node('A','Operator-Workstation');
-const a4=node('A','Historian-Server');
-t1.deps=[{parentId:m1.id,level:1}];
-f1.deps=[{parentId:t1.id,level:1}];
-f2.deps=[{parentId:t1.id,level:2}];
-a1.deps=[{parentId:f1.id,level:1}];   // Gateway -> Konnektivität (Lvl I) -> Überwachung (Lvl I) -> Mission (Lvl I) => Kronjuwel
-a2.deps=[{parentId:f1.id,level:1}];
-a3.deps=[{parentId:f2.id,level:2}];   // Workstation -> Datenerfassung (Lvl II) => Hoch
-a4.deps=[{parentId:f2.id,level:3}];   // Historian -> Datenerfassung, aber nur Workaround => Mittel
-data={M:[m1],T:[t1],F:[f1,f2],A:[a1,a2,a3,a4]};
+// Seed: an der Buch-Register-Vorlage 3.5.3 orientiert
+const s1=defAsset("SCADA-Steuerung Standort A");s1.phys=4;s1.econ=4;s1.reg=4;s1.dep=4;s1.rto=2;s1.typ="SCADA";s1.owner="OT-Leitung";s1.rtoVal="2 h";s1.rpoVal="0";s1.komp="Redundante Server, Air-Gap-Backup, MFA";
+const s2=defAsset("Schutzrelais Prozess 3");s2.phys=4;s2.econ=3;s2.reg=4;s2.dep=3;s2.rto=4;s2.typ="Schutzrelais";s2.owner="Instandhaltung";s2.rtoVal="0 h";s2.rpoVal="0";s2.komp="Keine Fernwartung, physische Sicherung";
+const s3=defAsset("Historian-Datenbank");s3.phys=2;s3.econ=3;s3.reg=2;s3.dep=3;s3.rto=2;s3.typ="Datenbank";s3.owner="IT-Leitung";s3.rtoVal="4 h";s3.rpoVal="15 Min";s3.komp="Tägliche Backups, Air-Gap, Jump-Host";
+assets=[s1,s2,s3];
 render();
 </script>
 </body>
