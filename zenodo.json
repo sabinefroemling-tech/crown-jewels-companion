@@ -1,0 +1,27 @@
+{
+  "title": "Crown-Jewels-Identifikation (CJA) — Companion zum Fachbuch \u201eISMS f\u00fcr die Industrie\u201c",
+  "description": "Leichtgewichtiges, browserbasiertes Werkzeug zur Identifikation der kritischsten Assets (Crown Jewels) in industriellen OT-Umgebungen. Umsetzung der MITRE-Methodik \u201eCrown Jewels Analysis (CJA) for Industrial Control Systems\u201c (#22-2824, 2022) als Vier-Ebenen-Abh\u00e4ngigkeitsmodell (Missionsziele \u2192 operative Aufgaben \u2192 Systemfunktionen \u2192 Assets) mit Max-Impact-Propagation auf der Skala I\u2013IV. Bewusste Vereinfachung gegen\u00fcber dem vollst\u00e4ndigen CJA (ohne AHP/QFD/FMEA-Rangordnung); kein Ersatz f\u00fcr eine vollst\u00e4ndige CJA, Business-Impact-Analyse (IEC 62443-3-2 / ISO 22301) oder Risikoanalyse. Alle Daten verbleiben im Browser. Begleitmaterial zum Fachbuch \u201eISMS f\u00fcr die Industrie. Von ISO 27001 \u00fcber NIS2 bis OT-Security\u201c.",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Fr\u00f6mling, Sabine",
+      "orcid": "0009-0009-0075-5503"
+    }
+  ],
+  "license": "CC-BY-NC-ND-4.0",
+  "access_right": "open",
+  "language": "deu",
+  "keywords": [
+    "OT-Security",
+    "Crown Jewels Analysis",
+    "CJA",
+    "MITRE",
+    "ICS",
+    "NIS2",
+    "IEC 62443",
+    "ISO 27001",
+    "Business Impact Analysis",
+    "ISMS",
+    "KRITIS"
+  ]
+}
