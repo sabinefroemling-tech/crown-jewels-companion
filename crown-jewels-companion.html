@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crown-Jewels-Identifikation · Companion zum Buch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{--red:#cc0000;--red-soft:#edd3d2;--ink:#1a1614;--paper:#faf8f5;--line:#d8d2ca;--muted:#6b635c;
+--krit:#cc0000;--hoch:#cf5246;--mittel:#c9820a;--niedrig:#3a7d44;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'JetBrains Mono',monospace;background:var(--paper);color:var(--ink);line-height:1.5;
+background-image:radial-gradient(var(--line) .5px,transparent .5px);background-size:22px 22px;}
+.wrap{max-width:1280px;margin:0 auto;padding:38px 20px 80px;}
+header{border-bottom:3px solid var(--ink);padding-bottom:18px;margin-bottom:18px;}
+.kicker{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;}
+h1{font-family:'Fraunces',serif;font-weight:800;font-size:clamp(24px,4.2vw,40px);line-height:1.05;margin:8px 0 10px;}
+.sub{font-size:13px;color:var(--muted);max-width:840px;}
+.sig{color:var(--red);font-weight:600;}
+.ref{font-size:11px;color:var(--muted);font-style:italic;margin-top:6px;}
+h2{font-family:'Fraunces',serif;font-size:20px;margin:26px 0 6px;}
+.note{font-size:12px;color:var(--muted);margin-bottom:10px;}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:12px;}
+th,td{border:1px solid var(--line);padding:7px 8px;text-align:center;vertical-align:middle;}
+th{background:var(--red);color:#fff;font-weight:600;font-size:10.5px;}
+th.crit{font-size:10px;}
+td.name{text-align:left;font-weight:600;min-width:150px;}
+td.name input{width:100%;border:0;font-family:inherit;font-size:12px;font-weight:600;background:transparent;color:var(--ink);}
+td.txt input{width:100%;border:0;font-family:inherit;font-size:11px;background:transparent;color:var(--ink);}
+input:focus,select:focus{outline:1px solid var(--red);}
+select{font-family:inherit;font-size:12px;border:1px solid var(--line);background:var(--paper);padding:3px;width:48px;cursor:pointer;}
+select.crit4{border-color:var(--red);font-weight:600;}
+.flagcell{font-weight:600;color:#fff;font-size:10.5px;letter-spacing:.4px;}
+.cnt{font-size:10px;color:var(--muted);}
+.del{color:var(--muted);cursor:pointer;border:0;background:none;font-family:inherit;font-size:14px;}
+.del:hover{color:var(--red);}
+.btn{font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
+padding:10px 15px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;transition:.15s;}
+.btn.ghost{background:transparent;color:var(--ink);} .btn:hover{background:var(--red);border-color:var(--red);color:#fff;}
+.addbtn{font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:7px 13px;border:1px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;margin-top:10px;}
+.addbtn:hover{background:var(--ink);color:#fff;}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:24px 0 0;}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:18px 0;}
+@media(max-width:700px){.summary{grid-template-columns:repeat(2,1fr)}}
+.scard{border:1px solid var(--ink);background:#fff;padding:13px;}
+.scard .num{font-family:'Fraunces',serif;font-size:28px;font-weight:800;}
+.scard .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+.scard.cj{border-color:var(--red);} .scard.cj .num{color:var(--red);}
+.legend{font-size:11px;color:var(--muted);margin:8px 0;}
+.pill{display:inline-block;padding:1px 7px;font-weight:600;color:#fff;margin-right:3px;font-size:10px;}
+.warn{background:#fff7e6;border:1px solid var(--mittel);color:#8a5a00;font-size:11.5px;padding:9px 12px;margin:10px 0;}
+details{margin:12px 0;background:#fff;border:1px solid var(--line);padding:10px 14px;}
+summary{cursor:pointer;font-weight:600;font-size:12px;}
+details p,details li{font-size:11.5px;color:var(--muted);margin-top:6px;}
+details ul{margin-left:18px;}
+footer{margin-top:34px;border-top:1px solid var(--line);padding-top:15px;font-size:11px;color:var(--muted);line-height:1.7;}
+@media print{body{background:none}.toolbar,.addbtn,.del{display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="kicker">OT-Security · Companion zum Buch</div>
+  <h1>Crown-Jewels-Identifikation</h1>
+  <p class="sub">Bewertung der OT-Assets nach fünf Kriterien (Skala 1–4, 4 = kritisch). Ein Asset ist automatisch Crown Jewel, wenn es in <b>mindestens zwei Kriterien</b> die Bewertung 4 erreicht. Die Methodik bildet das Verfahren aus dem Buch exakt ab — Ziel sind maximal fünf Crown Jewels je Werk. <span class="sig">§</span> Alles bleibt im Browser.</p>
+  <p class="ref">Methodik nach „ISMS für die Industrie\u201c, Kap. 3.5.2 (Crown-Jewels-Analyse) und 3.5.3 (Register).</p>
+</header>
+
+<details>
+<summary>Die fünf Kriterien & die Klassifikationsregel (lesen)</summary>
+<ul>
+<li><b>Physische Auswirkung</b> — Lebensgefahr oder Umweltschaden bei Ausfall/Manipulation (4 = unmittelbare Gefahr).</li>
+<li><b>Wirtschaftlicher Schaden</b> — über 250.000 € pro Stunde bei Ausfall (4 = Schwelle erreicht/überschritten).</li>
+<li><b>Regulatorische Pflicht</b> — Nachweispflicht nach §39 BSIG (4 = explizit nachweispflichtig).</li>
+<li><b>Abhängigkeiten der Gesamtproduktion</b> — wie viele Prozesse vom Asset abhängen (4 = produktionsweiter Single Point of Failure).</li>
+<li><b>Wiederherstellungszeit (RTO)</b> — RTO über 24 Stunden bei Ausfall (4 = sehr lange/keine schnelle Wiederherstellung).</li>
+</ul>
+<p><b>Klassifikationsregel (Buch 3.5.2):</b> Bewertung 4 in mindestens zwei Kriterien → automatisch Crown Jewel. Zusätzlich zeigt das Tool eine abgestufte Einordnung (Hoch/Mittel/Niedrig) für die übrigen Assets als Priorisierungshilfe — die verbindliche Crown-Jewel-Schwelle bleibt aber „4 in ≥2 Kriterien\u201c gemäß Buch.</p>
+<p><b>Hinweis:</b> Das Register ist kein statisches Dokument. Crown Jewels erhalten im Risiko-Assessment höchste Priorität, kürzere Patch-SLA (7 Tage bei kritischen Lücken, auch außerhalb von Wartungsfenstern), MFA/PAM-Pflicht und 24/7-Monitoring. Jährliche Überprüfung im Management-Review.</p>
+</details>
+
+<h2>Schritt 1 — Asset-Bewertung (5 Kriterien · Skala 1–4)</h2>
+<p class="note">Einstiegsfrage: Welche einzelne Komponente — SPS, SCADA, HMI, Schutzrelais, Historian — darf unter keinen Umständen ausfallen? Maximal fünf Crown Jewels je Werk anstreben.</p>
+<div style="overflow-x:auto;">
+<table id="tbl">
+  <thead><tr>
+    <th style="text-align:left">Asset / System</th>
+    <th class="crit">Physische<br>Auswirkung</th>
+    <th class="crit">Wirtsch.<br>Schaden</th>
+    <th class="crit">Regulator.<br>Pflicht §39</th>
+    <th class="crit">Produktions-<br>Abhängigk.</th>
+    <th class="crit">RTO<br>&gt;24h</th>
+    <th>4er-<br>Zähler</th>
+    <th>Einordnung</th>
+    <th></th>
+  </tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+</div>
+<button class="addbtn" onclick="addAsset()">+ Asset</button>
+
+<div class="summary" id="summary"></div>
+<div class="legend">
+  <span class="pill" style="background:var(--krit)">CROWN JEWEL · 4 in ≥2 Kriterien</span>
+  <span class="pill" style="background:var(--hoch)">HOCH · eine 4</span>
+  <span class="pill" style="background:var(--mittel)">MITTEL · Summe ≥12 (Ø ≥2,4)</span>
+  <span class="pill" style="background:var(--niedrig)">NIEDRIG</span>
+</div>
+<div id="overWarn"></div>
+
+<h2>Schritt 2 — Crown-Jewels-Register</h2>
+<p class="note">Für jedes als Crown Jewel klassifizierte Asset werden hier die Register-Felder gepflegt (Buch 3.5.3). RTO „0 h\u201c bedeutet: darf nie ausfallen, sofortiger manueller Eingriff.</p>
+<div style="overflow-x:auto;">
+<table id="regTbl">
+  <thead><tr>
+    <th>ID</th><th style="text-align:left">Asset</th><th>Typ</th><th>Asset Owner</th>
+    <th>RTO</th><th>RPO</th><th>Kritikalität</th><th style="text-align:left">CJ-Begründung</th><th style="text-align:left">Kompensation</th>
+  </tr></thead>
+  <tbody id="regRows"></tbody>
+</table>
+</div>
+<p class="note" id="regEmpty"></p>
+
+<div class="warn" style="margin-top:30px;border-color:var(--red);background:#fdeceb;">
+  <b>⚠ Wichtiger Hinweis zur Vollständigkeit — Abhängigkeiten:</b>
+  Dieses Werkzeug bewertet jedes Asset <b>isoliert</b> nach den fünf Kriterien. In der Praxis wird ein für sich unkritisches Asset (z. B. OT-Switch, Domänencontroller, Stromversorgung, Verkabelung) oft kritisch, <i>weil mehrere andere Assets davon abhängen</i> — ohne dass es selbst zwei 4er erreicht.
+  Prüfen Sie deshalb nach der isolierten Bewertung in einem zweiten Schritt manuell, ob ein Asset durch Abhängigkeiten faktisch zum Crown Jewel wird. Eine vollständige Crown-Jewels-Analyse berücksichtigt diese Abhängigkeitsketten.
+</div>
+
+<div class="toolbar">
+  <button class="btn ghost" onclick="saveJSON()">Speichern (JSON)</button>
+  <button class="btn ghost" onclick="document.getElementById('file').click()">Laden (JSON)</button>
+  <input type="file" id="file" accept=".json" style="display:none" onchange="loadJSON(event)">
+  <button class="btn ghost" onclick="exportCSV()">Export CSV</button>
+  <button class="btn ghost" onclick="window.print()">Drucken / PDF</button>
+</div>
+
+<footer>
+  Methodik exakt nach „ISMS für die Industrie\u201c, Kap. 3.5. Crown-Jewel-Schwelle: Bewertung 4 in mindestens zwei der fünf Kriterien.
+  Kritikalitätsstufen Hoch/Kritisch entsprechen NIS2 §30 Abs. 2 Nr. 1 (Risikoanalyse) und Nr. 3 (Business Continuity).
+  Begleitwerkzeug zur Workshop-Strukturierung — ersetzt nicht den Workshop mit OT-Leitung, Produktion und ISMS-Verantwortlichen.<br>
+  <span class="sig">§</span> Sabine Frömling — Independent OT-Security &amp; Compliance Advisory.
+</footer>
+</div>
+
+<script>
+const CRIT=["phys","econ","reg","dep","rto"];
+const TYP=["SPS","SCADA","HMI","Schutzrelais","Historian","Engineering-WS","Netzwerk","Datenbank","Sonstiges"];
+let assets=[];
+function defAsset(n){return {id:uid(),name:n||"Neues Asset",phys:1,econ:1,reg:1,dep:1,rto:1,
+  typ:"SPS",owner:"",rtoVal:"",rpoVal:"",komp:""};}
+function uid(){return crypto.randomUUID();}
+
+// Buch-Logik: 4 in >=2 Kriterien -> Crown Jewel. Sonst abgestufte Hilfs-Einordnung.
+function count4(a){return CRIT.reduce((n,k)=>n+(a[k]===4?1:0),0);}
+function sum(a){return CRIT.reduce((s,k)=>s+a[k],0);}
+function classify(a){
+  const c4=count4(a);
+  if(c4>=2)return{label:"CROWN JEWEL",color:"var(--krit)",rank:4,cj:true};
+  if(c4===1)return{label:"HOCH",color:"var(--hoch)",rank:3,cj:false};
+  if(sum(a)>=12)return{label:"MITTEL",color:"var(--mittel)",rank:2,cj:false};
+  return{label:"NIEDRIG",color:"var(--niedrig)",rank:1,cj:false};
+}
+function critLabel(a){ // Register-Kritikalität
+  const c4=count4(a);
+  if(c4>=2)return"Kritisch"; if(c4===1||sum(a)>=14)return"Hoch"; return"Mittel";
+}
+const CRITNAME={phys:"physische Auswirkung",econ:"wirtsch. Schaden",reg:"regulator. Pflicht",dep:"Produktionsabhängigkeit",rto:"RTO >24h"};
+function crit4Reasons(a){return CRIT.filter(k=>a[k]===4).map(k=>CRITNAME[k]).join(", ");}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+function render(){
+  const tb=document.getElementById('rows');tb.innerHTML='';
+  assets.forEach((a,i)=>{
+    const cl=classify(a),c4=count4(a);
+    let c=`<td class="name"><input value="${esc(a.name)}" onchange="upd(${i},'name',this.value)"></td>`;
+    CRIT.forEach(k=>{
+      c+=`<td><select class="${a[k]===4?'crit4':''}" onchange="upd(${i},'${k}',+this.value)">`+
+        [1,2,3,4].map(v=>`<option ${a[k]==v?'selected':''}>${v}</option>`).join('')+`</select></td>`;
+    });
+    c+=`<td class="cnt">${c4}×4</td>`;
+    c+=`<td class="flagcell" style="background:${cl.color}">${cl.label}</td>`;
+    c+=`<td><button class="del" onclick="del(${i})">✕</button></td>`;
+    const tr=document.createElement('tr');tr.innerHTML=c;tb.appendChild(tr);
+  });
+  renderSummary();renderRegister();
+}
+function renderSummary(){
+  const c={4:0,3:0,2:0,1:0};assets.forEach(a=>c[classify(a).rank]++);
+  document.getElementById('summary').innerHTML=`
+    <div class="scard cj"><div class="num">${c[4]}</div><div class="lbl">Crown Jewels</div></div>
+    <div class="scard"><div class="num">${c[3]}</div><div class="lbl">Hoch</div></div>
+    <div class="scard"><div class="num">${c[2]}</div><div class="lbl">Mittel</div></div>
+    <div class="scard"><div class="num">${assets.length}</div><div class="lbl">Assets gesamt</div></div>`;
+  // Buch: maximal 5 Crown Jewels anstreben
+  const w=document.getElementById('overWarn');
+  if(c[4]>5){w.innerHTML=`<div class="warn">⚠ ${c[4]} Crown Jewels identifiziert. Das Buch empfiehlt maximal fünf je Werk — prüfen Sie, ob die Bewertung zu großzügig ist oder ob der Geltungsbereich (z. B. mehrere Werke) aufgeteilt werden sollte.</div>`;}
+  else w.innerHTML='';
+}
+function renderRegister(){
+  const cjs=assets.filter(a=>classify(a).cj);
+  const tb=document.getElementById('regRows');tb.innerHTML='';
+  document.getElementById('regEmpty').textContent=cjs.length?'':'Noch keine Crown Jewels klassifiziert (4 in ≥2 Kriterien). Bewerten Sie zuerst in Schritt 1.';
+  cjs.forEach((a,i)=>{
+    const idx=assets.indexOf(a);
+    const id="CJ-"+String(i+1).padStart(3,'0');
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${id}</td>`+
+      `<td class="name">${esc(a.name)}</td>`+
+      `<td><select onchange="upd(${idx},'typ',this.value)" style="width:auto">`+TYP.map(t=>`<option ${a.typ===t?'selected':''}>${t}</option>`).join('')+`</select></td>`+
+      `<td class="txt"><input value="${esc(a.owner)}" placeholder="Owner" onchange="upd(${idx},'owner',this.value)"></td>`+
+      `<td class="txt"><input value="${esc(a.rtoVal)}" placeholder="z.B. 2 h" style="width:60px" onchange="upd(${idx},'rtoVal',this.value)"></td>`+
+      `<td class="txt"><input value="${esc(a.rpoVal)}" placeholder="z.B. 0" style="width:60px" onchange="upd(${idx},'rpoVal',this.value)"></td>`+
+      `<td class="flagcell" style="background:var(--krit)">${critLabel(a)}</td>`+
+      `<td class="txt" style="font-size:10.5px;color:var(--muted)">4 in: ${esc(crit4Reasons(a))}</td>`+
+      `<td class="txt"><input value="${esc(a.komp)}" placeholder="Kompensationsmaßnahmen" onchange="upd(${idx},'komp',this.value)"></td>`;
+    tb.appendChild(tr);
+  });
+}
+function upd(i,k,v){assets[i][k]=v;render();}
+function del(i){assets.splice(i,1);render();}
+function addAsset(){assets.push(defAsset("Asset "+(assets.length+1)));render();}
+
+function saveJSON(){const blob=new Blob([JSON.stringify({assets},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crown-jewels-buch.json';a.click();}
+function loadJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(d.assets){assets=d.assets;render();}}catch(err){alert('Datei nicht lesbar.');}};r.readAsText(f);}
+function exportCSV(){
+  const head=["Asset","Physisch","Wirtschaft","Regulatorik","Abhängigk","RTO>24h","4er-Zähler","Einordnung","CJ-Kritikalität","Typ","Owner","RTO","RPO","Kompensation"];
+  const rows=assets.map(a=>[a.name,a.phys,a.econ,a.reg,a.dep,a.rto,count4(a),classify(a).label,classify(a).cj?critLabel(a):"",a.typ,a.owner,a.rtoVal,a.rpoVal,a.komp]);
+  const csv=[head,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
+  const blob=new Blob(["\ufeff"+csv],{type:'text/csv'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crown-jewels-register.csv';a.click();
+}
+
+// Seed: an der Buch-Register-Vorlage 3.5.3 orientiert
+const s1=defAsset("SCADA-Steuerung Standort A");s1.phys=4;s1.econ=4;s1.reg=4;s1.dep=4;s1.rto=2;s1.typ="SCADA";s1.owner="OT-Leitung";s1.rtoVal="2 h";s1.rpoVal="0";s1.komp="Redundante Server, Air-Gap-Backup, MFA";
+const s2=defAsset("Schutzrelais Prozess 3");s2.phys=4;s2.econ=3;s2.reg=4;s2.dep=3;s2.rto=4;s2.typ="Schutzrelais";s2.owner="Instandhaltung";s2.rtoVal="0 h";s2.rpoVal="0";s2.komp="Keine Fernwartung, physische Sicherung";
+const s3=defAsset("Historian-Datenbank");s3.phys=2;s3.econ=3;s3.reg=2;s3.dep=3;s3.rto=2;s3.typ="Datenbank";s3.owner="IT-Leitung";s3.rtoVal="4 h";s3.rpoVal="15 Min";s3.komp="Tägliche Backups, Air-Gap, Jump-Host";
+assets=[s1,s2,s3];
+render();
+</script>
+</body>
+</html>
