@@ -55,120 +55,168 @@ details p,details li{font-size:11.5px;color:var(--muted);margin-top:6px;}
 details ul{margin-left:18px;}
 footer{margin-top:34px;border-top:1px solid var(--line);padding-top:15px;font-size:11px;color:var(--muted);line-height:1.7;}
 @media print{body{background:none}.toolbar,.addbtn,.del{display:none!important}}
+.langsw{position:absolute;top:0;right:0;display:flex;border:1px solid var(--ink);}
+.langsw button{font-family:inherit;font-size:11px;font-weight:600;padding:5px 11px;border:0;background:transparent;color:var(--ink);cursor:pointer;letter-spacing:1px;}
+.langsw button.on{background:var(--ink);color:#fff;}
+@media print{.langsw{display:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <div class="kicker">OT-Security · Companion zum Buch</div>
-  <h1>Crown-Jewels-Identifikation</h1>
-  <p class="sub">Bewertung der OT-Assets nach fünf Kriterien (Skala 1–4, 4 = kritisch). Ein Asset ist automatisch Crown Jewel, wenn es in <b>mindestens zwei Kriterien</b> die Bewertung 4 erreicht. Die Methodik bildet das Verfahren aus dem Buch exakt ab. <span class="sig">§</span> Alles bleibt im Browser.</p>
-  <p class="ref">Methodik nach „ISMS für die Industrie\u201c, Kap. 3.5.2 (Crown-Jewels-Analyse) und 3.5.3 (Register).</p>
+<header style="position:relative">
+  <div class="langsw noprint"><button id="lde" class="on" onclick="setLang('de')">DE</button><button id="len" onclick="setLang('en')">EN</button></div>
+  <div class="kicker" data-t="kicker"></div>
+  <h1 data-t="h1"></h1>
+  <p class="sub" data-t="sub"></p>
+  <p class="ref" data-t="ref"></p>
 </header>
 
 <details>
-<summary>Die fünf Kriterien & die Klassifikationsregel (lesen)</summary>
-<ul>
-<li><b>Physische Auswirkung</b> — Lebensgefahr oder Umweltschaden bei Ausfall/Manipulation (4 = unmittelbare Gefahr).</li>
-<li><b>Wirtschaftlicher Schaden</b> — über 250.000 € pro Stunde bei Ausfall (4 = Schwelle erreicht/überschritten).</li>
-<li><b>Regulatorische Pflicht</b> — Nachweispflicht nach §39 BSIG (4 = explizit nachweispflichtig).</li>
-<li><b>Abhängigkeiten der Gesamtproduktion</b> — wie viele Prozesse vom Asset abhängen (4 = produktionsweiter Single Point of Failure).</li>
-<li><b>Wiederherstellungszeit (RTO)</b> — RTO über 24 Stunden bei Ausfall (4 = sehr lange/keine schnelle Wiederherstellung).</li>
-</ul>
-<p><b>Klassifikationsregel (Buch 3.5.2):</b> Bewertung 4 in mindestens zwei Kriterien → automatisch Crown Jewel. Zusätzlich zeigt das Tool eine abgestufte Einordnung (Hoch/Mittel/Niedrig) für die übrigen Assets als Priorisierungshilfe — die verbindliche Crown-Jewel-Schwelle bleibt aber „4 in ≥2 Kriterien\u201c gemäß Buch.</p>
-<p><b>Hinweis:</b> Das Register ist kein statisches Dokument. Crown Jewels erhalten im Risiko-Assessment höchste Priorität, kürzere Patch-SLA (7 Tage bei kritischen Lücken, auch außerhalb von Wartungsfenstern), MFA/PAM-Pflicht und 24/7-Monitoring. Jährliche Überprüfung im Management-Review.</p>
+<summary data-t="dsum"></summary>
+<div data-t="dbody"></div>
 </details>
 
-<h2>Schritt 1 — Asset-Bewertung (5 Kriterien · Skala 1–4)</h2>
-<p class="note">Einstiegsfrage: Welche einzelne Komponente — SPS, SCADA, HMI, Schutzrelais, Historian — darf unter keinen Umständen ausfallen? Maximal fünf Crown Jewels je Werk anstreben.</p>
+<h2 data-t="h2a"></h2>
+<p class="note" data-t="notea"></p>
 <div style="overflow-x:auto;">
 <table id="tbl">
-  <thead><tr>
-    <th style="text-align:left">Asset / System</th>
-    <th class="crit">Physische<br>Auswirkung</th>
-    <th class="crit">Wirtsch.<br>Schaden</th>
-    <th class="crit">Regulator.<br>Pflicht §39</th>
-    <th class="crit">Produktions-<br>Abhängigk.</th>
-    <th class="crit">RTO<br>&gt;24h</th>
-    <th>4er-<br>Zähler</th>
-    <th>Einordnung</th>
-    <th></th>
-  </tr></thead>
+  <thead><tr id="thead1"></tr></thead>
   <tbody id="rows"></tbody>
 </table>
 </div>
-<button class="addbtn" onclick="addAsset()">+ Asset</button>
+<button class="addbtn" onclick="addAsset()" data-t="addbtn"></button>
 
 <div class="summary" id="summary"></div>
-<div class="legend">
-  <span class="pill" style="background:var(--krit)">CROWN JEWEL · 4 in ≥2 Kriterien</span>
-  <span class="pill" style="background:var(--hoch)">HOCH · eine 4</span>
-  <span class="pill" style="background:var(--mittel)">MITTEL · Summe ≥12 (Ø ≥2,4)</span>
-  <span class="pill" style="background:var(--niedrig)">NIEDRIG</span>
-</div>
+<div class="legend" id="legend"></div>
 <div id="overWarn"></div>
 
-<h2>Schritt 2 — Crown-Jewels-Register</h2>
-<p class="note">Für jedes als Crown Jewel klassifizierte Asset werden hier die Register-Felder gepflegt (Buch 3.5.3). RTO „0 h\u201c bedeutet: darf nie ausfallen, sofortiger manueller Eingriff.</p>
+<h2 data-t="h2b"></h2>
+<p class="note" data-t="noteb"></p>
 <div style="overflow-x:auto;">
 <table id="regTbl">
-  <thead><tr>
-    <th>ID</th><th style="text-align:left">Asset</th><th>Typ</th><th>Asset Owner</th>
-    <th>RTO</th><th>RPO</th><th>Kritikalität</th><th style="text-align:left">CJ-Begründung</th><th style="text-align:left">Kompensation</th>
-  </tr></thead>
+  <thead><tr id="thead2"></tr></thead>
   <tbody id="regRows"></tbody>
 </table>
 </div>
 <p class="note" id="regEmpty"></p>
 
-<div class="warn" style="margin-top:30px;border-color:var(--red);background:#fdeceb;">
-  <b>⚠ Wichtiger Hinweis zur Vollständigkeit — Abhängigkeiten:</b>
-  Dieses Werkzeug bewertet jedes Asset <b>isoliert</b> nach den fünf Kriterien. In der Praxis wird ein für sich unkritisches Asset (z. B. OT-Switch, Domänencontroller, Stromversorgung, Verkabelung) oft kritisch, <i>weil mehrere andere Assets davon abhängen</i> — ohne dass es selbst zwei 4er erreicht.
-  Prüfen Sie deshalb nach der isolierten Bewertung in einem zweiten Schritt manuell, ob ein Asset durch Abhängigkeiten faktisch zum Crown Jewel wird. Eine vollständige Crown-Jewels-Analyse berücksichtigt diese Abhängigkeitsketten.
-</div>
+<div class="warn" style="margin-top:30px;border-color:var(--red);background:#fdeceb;" data-t="depwarn"></div>
 
 <div class="toolbar">
-  <button class="btn ghost" onclick="saveJSON()">Speichern (JSON)</button>
-  <button class="btn ghost" onclick="document.getElementById('file').click()">Laden (JSON)</button>
+  <button class="btn ghost" onclick="saveJSON()" data-t="bsave"></button>
+  <button class="btn ghost" onclick="document.getElementById('file').click()" data-t="bload"></button>
   <input type="file" id="file" accept=".json" style="display:none" onchange="loadJSON(event)">
-  <button class="btn ghost" onclick="exportCSV()">Export CSV</button>
-  <button class="btn ghost" onclick="window.print()">Drucken / PDF</button>
+  <button class="btn ghost" onclick="exportCSV()" data-t="bcsv"></button>
+  <button class="btn ghost" onclick="window.print()" data-t="bprint"></button>
 </div>
 
-<footer>
-  Methodik exakt nach „ISMS für die Industrie\u201c, Kap. 3.5. Crown-Jewel-Schwelle: Bewertung 4 in mindestens zwei der fünf Kriterien.
-  Kritikalitätsstufen Hoch/Kritisch entsprechen NIS2 §30 Abs. 2 Nr. 1 (Risikoanalyse) und Nr. 3 (Business Continuity).
-  Begleitwerkzeug zur Workshop-Strukturierung — ersetzt nicht den Workshop mit OT-Leitung, Produktion und ISMS-Verantwortlichen.<br>
-  <span class="sig">§</span> Sabine Frömling — Independent OT-Security Governance &amp; Compliance Advisory.
-</footer>
+<footer data-t="foot"></footer>
 </div>
 
 <script>
-const CRIT=["phys","econ","reg","dep","rto"];
+/* ================= i18n ================= */
+const TXT={
+de:{
+ title:"Crown-Jewels-Identifikation · Companion zum Buch",
+ kicker:"OT-Security · Companion zum Buch",
+ h1:"Crown-Jewels-Identifikation",
+ sub:"Bewertung der OT-Assets nach fünf Kriterien (Skala 1–4, 4 = kritisch). Ein Asset ist automatisch Crown Jewel, wenn es in <b>mindestens zwei Kriterien</b> die Bewertung 4 erreicht. Die Methodik bildet das Verfahren aus dem Buch exakt ab. <span class='sig'>§</span> Alles bleibt im Browser.",
+ ref:"Methodik nach „ISMS für die Industrie\u201c, Kap. 3.5.2 (Crown-Jewels-Analyse) und 3.5.3 (Register).",
+ dsum:"Die fünf Kriterien & die Klassifikationsregel (lesen)",
+ dbody:"<ul><li><b>Physische Auswirkung</b> — Lebensgefahr oder Umweltschaden bei Ausfall/Manipulation (4 = unmittelbare Gefahr).</li><li><b>Wirtschaftlicher Schaden</b> — über 250.000 € pro Stunde bei Ausfall (4 = Schwelle erreicht/überschritten).</li><li><b>Regulatorische Pflicht</b> — Nachweispflicht nach §39 BSIG (4 = explizit nachweispflichtig).</li><li><b>Abhängigkeiten der Gesamtproduktion</b> — wie viele Prozesse vom Asset abhängen (4 = produktionsweiter Single Point of Failure).</li><li><b>Wiederherstellungszeit (RTO)</b> — RTO über 24 Stunden bei Ausfall (4 = sehr lange/keine schnelle Wiederherstellung).</li></ul><p><b>Klassifikationsregel (Buch 3.5.2):</b> Bewertung 4 in mindestens zwei Kriterien → automatisch Crown Jewel. Zusätzlich zeigt das Tool eine abgestufte Einordnung (Hoch/Mittel/Niedrig) für die übrigen Assets als Priorisierungshilfe — die verbindliche Crown-Jewel-Schwelle bleibt aber „4 in ≥2 Kriterien\u201c gemäß Buch.</p><p><b>Hinweis:</b> Das Register ist kein statisches Dokument. Crown Jewels erhalten im Risiko-Assessment höchste Priorität, kürzere Patch-SLA (7 Tage bei kritischen Lücken, auch außerhalb von Wartungsfenstern), MFA/PAM-Pflicht und 24/7-Monitoring. Jährliche Überprüfung im Management-Review.</p>",
+ h2a:"Schritt 1 — Asset-Bewertung (5 Kriterien · Skala 1–4)",
+ notea:"Einstiegsfrage: Welche einzelne Komponente — SPS, SCADA, HMI, Schutzrelais, Historian — darf unter keinen Umständen ausfallen? Maximal fünf Crown Jewels je Werk anstreben.",
+ th1:["Asset / System","Physische<br>Auswirkung","Wirtsch.<br>Schaden","Regulator.<br>Pflicht §39","Produktions-<br>Abhängigk.","RTO<br>&gt;24h","4er-<br>Zähler","Einordnung",""],
+ addbtn:"+ Asset",
+ legend:[["CROWN JEWEL · 4 in ≥2 Kriterien","var(--krit)"],["HOCH · eine 4","var(--hoch)"],["MITTEL · Summe ≥12 (Ø ≥2,4)","var(--mittel)"],["NIEDRIG","var(--niedrig)"]],
+ h2b:"Schritt 2 — Crown-Jewels-Register",
+ noteb:"Für jedes als Crown Jewel klassifizierte Asset werden hier die Register-Felder gepflegt (Buch 3.5.3). RTO „0 h\u201c bedeutet: darf nie ausfallen, sofortiger manueller Eingriff.",
+ th2:["ID","Asset","Typ","Asset Owner","RTO","RPO","Kritikalität","CJ-Begründung","Kompensation"],
+ depwarn:"<b>⚠ Wichtiger Hinweis zur Vollständigkeit — Abhängigkeiten:</b> Dieses Werkzeug bewertet jedes Asset <b>isoliert</b> nach den fünf Kriterien. In der Praxis wird ein für sich unkritisches Asset (z. B. OT-Switch, Domänencontroller, Stromversorgung, Verkabelung) oft kritisch, <i>weil mehrere andere Assets davon abhängen</i> — ohne dass es selbst zwei 4er erreicht. Prüfen Sie deshalb nach der isolierten Bewertung in einem zweiten Schritt manuell, ob ein Asset durch Abhängigkeiten faktisch zum Crown Jewel wird. Eine vollständige Crown-Jewels-Analyse berücksichtigt diese Abhängigkeitsketten.",
+ bsave:"Speichern (JSON)",bload:"Laden (JSON)",bcsv:"Export CSV",bprint:"Drucken / PDF",
+ foot:"Methodik exakt nach „ISMS für die Industrie\u201c, Kap. 3.5. Crown-Jewel-Schwelle: Bewertung 4 in mindestens zwei der fünf Kriterien. Kritikalitätsstufen Hoch/Kritisch entsprechen NIS2 §30 Abs. 2 Nr. 1 (Risikoanalyse) und Nr. 3 (Business Continuity). Begleitwerkzeug zur Workshop-Strukturierung — ersetzt nicht den Workshop mit OT-Leitung, Produktion und ISMS-Verantwortlichen.<br><span class='sig'>§</span> Sabine Frömling — Independent OT-Security Governance &amp; Compliance Advisory.",
+ cls:{cj:"CROWN JEWEL",hoch:"HOCH",mittel:"MITTEL",niedrig:"NIEDRIG"},
+ krit:{kritisch:"Kritisch",hoch:"Hoch",mittel:"Mittel"},
+ critname:{phys:"physische Auswirkung",econ:"wirtsch. Schaden",reg:"regulator. Pflicht",dep:"Produktionsabhängigkeit",rto:"RTO >24h"},
+ sum:["Crown Jewels","Hoch","Mittel","Assets gesamt"],
+ overwarn:n=>`⚠ ${n} Crown Jewels identifiziert. Das Buch empfiehlt maximal fünf je Werk — prüfen Sie, ob die Bewertung zu großzügig ist oder ob der Geltungsbereich (z. B. mehrere Werke) aufgeteilt werden sollte.`,
+ regEmpty:"Noch keine Crown Jewels klassifiziert (4 in ≥2 Kriterien). Bewerten Sie zuerst in Schritt 1.",
+ fourIn:"4 in:",phOwner:"Owner",phRto:"z.B. 2 h",phRpo:"z.B. 0",phKomp:"Kompensationsmaßnahmen",
+ newAsset:"Neues Asset",assetN:n=>"Asset "+n,
+ csvHead:["Asset","Physisch","Wirtschaft","Regulatorik","Abhängigk","RTO>24h","4er-Zähler","Einordnung","CJ-Kritikalität","Typ","Owner","RTO","RPO","Kompensation"],
+ csvName:"crown-jewels-register.csv",notRead:"Datei nicht lesbar."
+},
+en:{
+ title:"Crown Jewels Identification · Book companion",
+ kicker:"OT Security · Book companion",
+ h1:"Crown Jewels Identification",
+ sub:"Assessment of OT assets against five criteria (scale 1–4, 4 = critical). An asset automatically qualifies as a crown jewel when it scores 4 in <b>at least two criteria</b>. The methodology mirrors the procedure from the book exactly. <span class='sig'>§</span> Everything stays in your browser.",
+ ref:"Methodology per \u201cISMS für die Industrie\u201d, ch. 3.5.2 (crown jewels analysis) and 3.5.3 (register).",
+ dsum:"The five criteria & the classification rule (read me)",
+ dbody:"<ul><li><b>Physical impact</b> — danger to life or environmental damage on failure/manipulation (4 = immediate danger).</li><li><b>Economic damage</b> — more than €250,000 per hour of downtime (4 = threshold reached/exceeded).</li><li><b>Regulatory obligation</b> — evidence obligation under §39 BSIG, the German KRITIS regime (4 = explicitly in scope).</li><li><b>Dependencies of overall production</b> — how many processes depend on the asset (4 = plant-wide single point of failure).</li><li><b>Recovery time (RTO)</b> — RTO above 24 hours on failure (4 = very long/no fast recovery).</li></ul><p><b>Classification rule (book 3.5.2):</b> a score of 4 in at least two criteria → automatically a crown jewel. The tool additionally shows a graded tier (high/medium/low) for the remaining assets as a prioritisation aid — the binding crown-jewel threshold stays \u201c4 in ≥2 criteria\u201d per the book.</p><p><b>Note:</b> the register is not a static document. Crown jewels get top priority in risk assessment, shorter patch SLAs (7 days for critical vulnerabilities, including outside maintenance windows), mandatory MFA/PAM and 24/7 monitoring. Annual review in the management review.</p>",
+ h2a:"Step 1 — Asset assessment (5 criteria · scale 1–4)",
+ notea:"Opening question: which single component — PLC, SCADA, HMI, protective relay, historian — must never fail under any circumstances? Aim for at most five crown jewels per site.",
+ th1:["Asset / system","Physical<br>impact","Economic<br>damage","Regulatory<br>obligation","Production<br>dependency","RTO<br>&gt;24h","Count<br>of 4s","Tier",""],
+ addbtn:"+ Asset",
+ legend:[["CROWN JEWEL · 4 in ≥2 criteria","var(--krit)"],["HIGH · one 4","var(--hoch)"],["MEDIUM · sum ≥12 (avg ≥2.4)","var(--mittel)"],["LOW","var(--niedrig)"]],
+ h2b:"Step 2 — Crown jewels register",
+ noteb:"For every asset classified as a crown jewel, the register fields are maintained here (book 3.5.3). An RTO of \u201c0 h\u201d means: must never fail, immediate manual intervention.",
+ th2:["ID","Asset","Type","Asset owner","RTO","RPO","Criticality","CJ rationale","Compensation"],
+ depwarn:"<b>⚠ Important completeness note — dependencies:</b> this tool assesses each asset <b>in isolation</b> against the five criteria. In practice, an asset that is uncritical on its own (e.g. OT switch, domain controller, power supply, cabling) often becomes critical <i>because several other assets depend on it</i> — without itself reaching two 4s. After the isolated assessment, therefore, check manually in a second pass whether dependencies make an asset a de-facto crown jewel. A complete crown jewels analysis covers these dependency chains.",
+ bsave:"Save (JSON)",bload:"Load (JSON)",bcsv:"Export CSV",bprint:"Print / PDF",
+ foot:"Methodology exactly per \u201cISMS für die Industrie\u201d, ch. 3.5. Crown-jewel threshold: a score of 4 in at least two of the five criteria. The high/critical tiers correspond to NIS2 risk-analysis and business-continuity measures (German transposition: §30(2) no. 1 and no. 3 BSIG). Companion for structuring the workshop — it does not replace the workshop with OT management, production and ISMS owners.<br><span class='sig'>§</span> Sabine Frömling — Independent OT Security Governance &amp; Compliance Advisory.",
+ cls:{cj:"CROWN JEWEL",hoch:"HIGH",mittel:"MEDIUM",niedrig:"LOW"},
+ krit:{kritisch:"Critical",hoch:"High",mittel:"Medium"},
+ critname:{phys:"physical impact",econ:"economic damage",reg:"regulatory obligation",dep:"production dependency",rto:"RTO >24h"},
+ sum:["Crown jewels","High","Medium","Assets total"],
+ overwarn:n=>`⚠ ${n} crown jewels identified. The book recommends at most five per site — check whether the scoring is too generous or whether the scope (e.g. several sites) should be split.`,
+ regEmpty:"No crown jewels classified yet (4 in ≥2 criteria). Assess in step 1 first.",
+ fourIn:"4 in:",phOwner:"Owner",phRto:"e.g. 2 h",phRpo:"e.g. 0",phKomp:"Compensating measures",
+ newAsset:"New asset",assetN:n=>"Asset "+n,
+ csvHead:["Asset","Physical","Economic","Regulatory","Dependency","RTO>24h","Count of 4s","Tier","CJ criticality","Type","Owner","RTO","RPO","Compensation"],
+ csvName:"crown-jewels-register.csv",notRead:"File not readable."
+}};
+let lang="de";
+const L=()=>TXT[lang];
+
+/* Typ: kanonisch DE gespeichert (Kompatibilität zum No-Touch-Import), Anzeige übersetzt */
 const TYP=["SPS","SCADA","HMI","Schutzrelais","Historian","Engineering-WS","Netzwerk","Datenbank","Sonstiges"];
+const TYP_EN={"SPS":"PLC","Schutzrelais":"Protective relay","Netzwerk":"Network","Datenbank":"Database","Sonstiges":"Other"};
+const typLabel=t=>lang==="en"?(TYP_EN[t]||t):t;
+
+const CRIT=["phys","econ","reg","dep","rto"];
 let assets=[];
-function defAsset(n){return {id:uid(),name:n||"Neues Asset",phys:1,econ:1,reg:1,dep:1,rto:1,
-  typ:"SPS",owner:"",rtoVal:"",rpoVal:"",komp:""};}
+function defAsset(n){return {id:uid(),name:n||L().newAsset,phys:1,econ:1,reg:1,dep:1,rto:1,typ:"SPS",owner:"",rtoVal:"",rpoVal:"",komp:""};}
 function uid(){return crypto.randomUUID();}
 
-// Buch-Logik: 4 in >=2 Kriterien -> Crown Jewel. Sonst abgestufte Hilfs-Einordnung.
 function count4(a){return CRIT.reduce((n,k)=>n+(a[k]===4?1:0),0);}
 function sum(a){return CRIT.reduce((s,k)=>s+a[k],0);}
 function classify(a){
-  const c4=count4(a);
-  if(c4>=2)return{label:"CROWN JEWEL",color:"var(--krit)",rank:4,cj:true};
-  if(c4===1)return{label:"HOCH",color:"var(--hoch)",rank:3,cj:false};
-  if(sum(a)>=12)return{label:"MITTEL",color:"var(--mittel)",rank:2,cj:false};
-  return{label:"NIEDRIG",color:"var(--niedrig)",rank:1,cj:false};
+  const c4=count4(a),T=L().cls;
+  if(c4>=2)return{label:T.cj,color:"var(--krit)",rank:4,cj:true};
+  if(c4===1)return{label:T.hoch,color:"var(--hoch)",rank:3,cj:false};
+  if(sum(a)>=12)return{label:T.mittel,color:"var(--mittel)",rank:2,cj:false};
+  return{label:T.niedrig,color:"var(--niedrig)",rank:1,cj:false};
 }
-function critLabel(a){ // Register-Kritikalität
-  const c4=count4(a);
-  if(c4>=2)return"Kritisch"; if(c4===1||sum(a)>=14)return"Hoch"; return"Mittel";
-}
-const CRITNAME={phys:"physische Auswirkung",econ:"wirtsch. Schaden",reg:"regulator. Pflicht",dep:"Produktionsabhängigkeit",rto:"RTO >24h"};
-function crit4Reasons(a){return CRIT.filter(k=>a[k]===4).map(k=>CRITNAME[k]).join(", ");}
+function critLabel(a){const c4=count4(a),T=L().krit;
+  if(c4>=2)return T.kritisch; if(c4===1||sum(a)>=14)return T.hoch; return T.mittel;}
+function crit4Reasons(a){return CRIT.filter(k=>a[k]===4).map(k=>L().critname[k]).join(", ");}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
+/* ================= statisches i18n ================= */
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.title=L().title;
+  document.querySelectorAll("[data-t]").forEach(el=>el.innerHTML=L()[el.dataset.t]);
+  document.getElementById("thead1").innerHTML=L().th1.map((h,i)=>`<th${i===0?' style="text-align:left"':(i>=1&&i<=5?' class="crit"':'')}>${h}</th>`).join("");
+  document.getElementById("thead2").innerHTML=L().th2.map((h,i)=>`<th${[1,7,8].includes(i)?' style="text-align:left"':''}>${h}</th>`).join("");
+  document.getElementById("legend").innerHTML=L().legend.map(([t,c])=>`<span class="pill" style="background:${c}">${t}</span>`).join("\n  ");
+  document.getElementById("lde").classList.toggle("on",lang==="de");
+  document.getElementById("len").classList.toggle("on",lang==="en");
+}
+function setLang(l){lang=l;try{const u=new URL(location);u.searchParams.set('lang',l);history.replaceState(null,'',u);}catch(e){}applyLang();render();}
+
+/* ================= Rendering ================= */
 function render(){
   const tb=document.getElementById('rows');tb.innerHTML='';
   assets.forEach((a,i)=>{
@@ -187,58 +235,58 @@ function render(){
 }
 function renderSummary(){
   const c={4:0,3:0,2:0,1:0};assets.forEach(a=>c[classify(a).rank]++);
+  const S=L().sum;
   document.getElementById('summary').innerHTML=`
-    <div class="scard cj"><div class="num">${c[4]}</div><div class="lbl">Crown Jewels</div></div>
-    <div class="scard"><div class="num">${c[3]}</div><div class="lbl">Hoch</div></div>
-    <div class="scard"><div class="num">${c[2]}</div><div class="lbl">Mittel</div></div>
-    <div class="scard"><div class="num">${assets.length}</div><div class="lbl">Assets gesamt</div></div>`;
-  // Buch: maximal 5 Crown Jewels anstreben
+    <div class="scard cj"><div class="num">${c[4]}</div><div class="lbl">${S[0]}</div></div>
+    <div class="scard"><div class="num">${c[3]}</div><div class="lbl">${S[1]}</div></div>
+    <div class="scard"><div class="num">${c[2]}</div><div class="lbl">${S[2]}</div></div>
+    <div class="scard"><div class="num">${assets.length}</div><div class="lbl">${S[3]}</div></div>`;
   const w=document.getElementById('overWarn');
-  if(c[4]>5){w.innerHTML=`<div class="warn">⚠ ${c[4]} Crown Jewels identifiziert. Das Buch empfiehlt maximal fünf je Werk — prüfen Sie, ob die Bewertung zu großzügig ist oder ob der Geltungsbereich (z. B. mehrere Werke) aufgeteilt werden sollte.</div>`;}
+  if(c[4]>5){w.innerHTML=`<div class="warn">${L().overwarn(c[4])}</div>`;}
   else w.innerHTML='';
 }
 function renderRegister(){
   const cjs=assets.filter(a=>classify(a).cj);
   const tb=document.getElementById('regRows');tb.innerHTML='';
-  document.getElementById('regEmpty').textContent=cjs.length?'':'Noch keine Crown Jewels klassifiziert (4 in ≥2 Kriterien). Bewerten Sie zuerst in Schritt 1.';
+  document.getElementById('regEmpty').textContent=cjs.length?'':L().regEmpty;
   cjs.forEach((a,i)=>{
     const idx=assets.indexOf(a);
     const id="CJ-"+String(i+1).padStart(3,'0');
     const tr=document.createElement('tr');
     tr.innerHTML=`<td>${id}</td>`+
       `<td class="name">${esc(a.name)}</td>`+
-      `<td><select onchange="upd(${idx},'typ',this.value)" style="width:auto">`+TYP.map(t=>`<option ${a.typ===t?'selected':''}>${t}</option>`).join('')+`</select></td>`+
-      `<td class="txt"><input value="${esc(a.owner)}" placeholder="Owner" onchange="upd(${idx},'owner',this.value)"></td>`+
-      `<td class="txt"><input value="${esc(a.rtoVal)}" placeholder="z.B. 2 h" style="width:60px" onchange="upd(${idx},'rtoVal',this.value)"></td>`+
-      `<td class="txt"><input value="${esc(a.rpoVal)}" placeholder="z.B. 0" style="width:60px" onchange="upd(${idx},'rpoVal',this.value)"></td>`+
+      `<td><select onchange="upd(${idx},'typ',this.value)" style="width:auto">`+TYP.map(t=>`<option value="${t}" ${a.typ===t?'selected':''}>${esc(typLabel(t))}</option>`).join('')+`</select></td>`+
+      `<td class="txt"><input value="${esc(a.owner)}" placeholder="${L().phOwner}" onchange="upd(${idx},'owner',this.value)"></td>`+
+      `<td class="txt"><input value="${esc(a.rtoVal)}" placeholder="${L().phRto}" style="width:60px" onchange="upd(${idx},'rtoVal',this.value)"></td>`+
+      `<td class="txt"><input value="${esc(a.rpoVal)}" placeholder="${L().phRpo}" style="width:60px" onchange="upd(${idx},'rpoVal',this.value)"></td>`+
       `<td class="flagcell" style="background:var(--krit)">${critLabel(a)}</td>`+
-      `<td class="txt" style="font-size:10.5px;color:var(--muted)">4 in: ${esc(crit4Reasons(a))}</td>`+
-      `<td class="txt"><input value="${esc(a.komp)}" placeholder="Kompensationsmaßnahmen" onchange="upd(${idx},'komp',this.value)"></td>`;
+      `<td class="txt" style="font-size:10.5px;color:var(--muted)">${L().fourIn} ${esc(crit4Reasons(a))}</td>`+
+      `<td class="txt"><input value="${esc(a.komp)}" placeholder="${L().phKomp}" onchange="upd(${idx},'komp',this.value)"></td>`;
     tb.appendChild(tr);
   });
 }
 function upd(i,k,v){assets[i][k]=v;render();}
 function del(i){assets.splice(i,1);render();}
-function addAsset(){assets.push(defAsset("Asset "+(assets.length+1)));render();}
+function addAsset(){assets.push(defAsset(L().assetN(assets.length+1)));render();}
 
 function saveJSON(){const blob=new Blob([JSON.stringify({assets},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crown-jewels-buch.json';a.click();}
 function loadJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();
-  r.onload=()=>{try{const d=JSON.parse(r.result);if(d.assets){assets=d.assets;render();}}catch(err){alert('Datei nicht lesbar.');}};r.readAsText(f);}
+  r.onload=()=>{try{const d=JSON.parse(r.result);if(d.assets){assets=d.assets;render();}}catch(err){alert(L().notRead);}};r.readAsText(f);e.target.value='';}
 function exportCSV(){
-  const head=["Asset","Physisch","Wirtschaft","Regulatorik","Abhängigk","RTO>24h","4er-Zähler","Einordnung","CJ-Kritikalität","Typ","Owner","RTO","RPO","Kompensation"];
-  const rows=assets.map(a=>[a.name,a.phys,a.econ,a.reg,a.dep,a.rto,count4(a),classify(a).label,classify(a).cj?critLabel(a):"",a.typ,a.owner,a.rtoVal,a.rpoVal,a.komp]);
-  const csv=[head,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
+  const rows=assets.map(a=>[a.name,a.phys,a.econ,a.reg,a.dep,a.rto,count4(a),classify(a).label,classify(a).cj?critLabel(a):"",typLabel(a.typ),a.owner,a.rtoVal,a.rpoVal,a.komp]);
+  const csv=[L().csvHead,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(";")).join("\n");
   const blob=new Blob(["\ufeff"+csv],{type:'text/csv'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='crown-jewels-register.csv';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=L().csvName;a.click();
 }
 
-// Seed: an der Buch-Register-Vorlage 3.5.3 orientiert
+/* Seed: an der Buch-Register-Vorlage 3.5.3 orientiert */
 const s1=defAsset("SCADA-Steuerung Standort A");s1.phys=4;s1.econ=4;s1.reg=4;s1.dep=4;s1.rto=2;s1.typ="SCADA";s1.owner="OT-Leitung";s1.rtoVal="2 h";s1.rpoVal="0";s1.komp="Redundante Server, Air-Gap-Backup, MFA";
 const s2=defAsset("Schutzrelais Prozess 3");s2.phys=4;s2.econ=3;s2.reg=4;s2.dep=3;s2.rto=4;s2.typ="Schutzrelais";s2.owner="Instandhaltung";s2.rtoVal="0 h";s2.rpoVal="0";s2.komp="Keine Fernwartung, physische Sicherung";
 const s3=defAsset("Historian-Datenbank");s3.phys=2;s3.econ=3;s3.reg=2;s3.dep=3;s3.rto=2;s3.typ="Datenbank";s3.owner="IT-Leitung";s3.rtoVal="4 h";s3.rpoVal="15 Min";s3.komp="Tägliche Backups, Air-Gap, Jump-Host";
 assets=[s1,s2,s3];
-render();
+try{if(new URLSearchParams(location.search).get('lang')==='en')lang='en';}catch(e){}
+applyLang();render();
 </script>
 </body>
 </html>
